@@ -20,6 +20,11 @@
 </head>
 <body>
 
+<select id="layer-select">
+    <option value="Greyscale">Greyscale</option>
+    <option value="OSM">OpenStreetMap</option>
+</select>
+
 <div id="mapid"></div>
 
 <script>
@@ -27,11 +32,57 @@
 var mymap = L.map('mapid').setView([51.584840, 21.427066], 10);
 
 // Set up the OSM layer:
+/***
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '© OpenStreetMap contributors'
 }).addTo(mymap);
+***/
 
+var layers = {
+    "OSM": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap contributors'
+    }),
+    "Greyscale": L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.{ext}', {
+	minZoom: 0,
+	maxZoom: 20,
+	attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+	ext: 'png'
+    })
+};
+
+layers["Greyscale"].addTo(mymap);
+
+// Dropdown selection handler
+document.getElementById('layer-select').addEventListener('change', function(e) {
+    var selectedLayer = e.target.value;
+    mymap.eachLayer(function(layer) {
+        mymap.removeLayer(layer); // Remove existing layers
+    });
+    layers[selectedLayer].addTo(mymap); // Add the selected layer
+    addMarkers(); // Re-add markers since they are removed with the layer
+});
+
+function addMarkers() {
+    $.getJSON('geo_data.json', function(data) {
+        data.forEach(function(item) {
+            var marker = L.circleMarker([item.lat, item.lon], {
+                color: item.color,
+                fillColor: item.color,
+                fillOpacity: 0.9,
+                radius: 8
+            }).addTo(mymap);
+            marker.bindPopup(item.address + "<br>Lat: " + item.lat + ", Lon: " + item.lon + "<br>Color: " + item.color);
+        });
+    });
+}
+
+// Initial call to add markers to the map
+addMarkers();
+
+
+/***
 // Load the geo_data.json file and add markers
 $.getJSON('geo_data.json', function(data) {
     data.forEach(function(item) {
@@ -46,6 +97,7 @@ $.getJSON('geo_data.json', function(data) {
         marker.bindPopup(item.address + "<br>Lat: " + item.lat + ", Lon: " + item.lon + "<br>Color: " + item.color);
     });
 });
+***/
 
 </script>
 
