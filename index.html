@@ -52,7 +52,7 @@ var layers = {
     })
 };
 
-layers["OSM"].addTo(mymap);
+layers["Greyscale"].addTo(mymap);
 
 // Dropdown selection handler
 document.getElementById('layer-select').addEventListener('change', function(e) {
@@ -65,7 +65,8 @@ document.getElementById('layer-select').addEventListener('change', function(e) {
 });
 
 function addMarkers() {
-    $.getJSON('geo_data.json', function(data) {
+    var uniqueURL = 'geo_data.json?timestamp=' + new Date().getTime();
+    $.getJSON(uniqueURL, function(data) {
         data.forEach(function(item) {
             var marker = L.circleMarker([item.lat, item.lon], {
                 color: item.color,
