@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Map with markers</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Load Leaflet.css -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+
+    <!-- Load Leaflet.js -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+    <!-- Load jQuery for easy JSON processing -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <style>
+        #mapid { height: 600px; }
+    </style>
+</head>
+<body>
+
+<div id="mapid"></div>
+
+<script>
+// Initialize the map and set its view to our chosen geographical coordinates and a zoom level:
+var mymap = L.map('mapid').setView([51.584840, 21.427066], 10);
+
+// Set up the OSM layer:
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap contributors'
+}).addTo(mymap);
+
+// Load the geo_data.json file and add markers
+$.getJSON('geo_data.json', function(data) {
+    data.forEach(function(item) {
+        var marker = L.circleMarker([item.lat, item.lon], {
+            color: item.color, // Color of the marker
+            fillColor: item.color, // Fill color of the marker
+            fillOpacity: 0.9,
+            radius: 7 // Size of the marker
+        }).addTo(mymap);
+
+        // Optionally, add a popup to each marker
+        marker.bindPopup("Lat: " + item.lat + ", Lon: " + item.lon + "<br>Color: " + item.color);
+    });
+});
+
+</script>
+
+</body>
+</html>
