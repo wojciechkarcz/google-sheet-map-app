@@ -75,7 +75,7 @@ function addMarkers() {
                 fillOpacity: 0.9,
                 radius: 8
             }).addTo(mymap);
-            marker.bindPopup(item.address + "<br>Lat: " + item.lat + ", Lon: " + item.lon + "<br>Color: " + item.color);
+            marker.bindPopup("<b>" + item.address + "</b><br>" + item.info);
         });
     });
 }
